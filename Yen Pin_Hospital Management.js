@@ -101,7 +101,35 @@ module.exports = {
             'ward_id': 5
         }
     ],
-    // Explain what function A does
+    // Option for Main Menu
+    main_options: "Choose an option:\n" +
+        "1. Peoples\n" +
+        "2. Hospitals\n" +
+        "3. Exit\n" +
+        "==========================\n",
+    // Option for Peoples tab
+    peoples_options: "Choose an option:\n" +
+        "1. List Peoples\n" +
+        "2. Add People\n" +
+        "3. Delete People\n" +
+        "4. Update People\n" +
+        "5. Back to main menu\n" +
+        "==========================\n",
+    // Option for Hospitals tab
+    hospitals_options: "Choose an option:\n" +
+        "1. List Hospitals\n" +
+        "2. Add Hospital\n" +
+        "3. Delete Hospital\n" +
+        "4. Update Hospital\n" +
+        "5. List Wards\n" +
+        "6. Add Ward\n" +
+        "7. Delete Ward\n" +
+        "8. Update Ward\n" +
+        "9. Ward Patient\n" +
+        "10. Checkout Patient\n" +
+        "11. Back to main menu\n" +
+        "==========================\n",
+    // Get All Peoples
     functionA() {
         return 1 + 2;
     },
