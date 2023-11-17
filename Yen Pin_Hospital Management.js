@@ -46,6 +46,8 @@ module.exports = {
             'address': '567 Woodlands Drive, #05-678, Singapore 567840'
         }
     ],
+    // Default database for hospital
+    // These data contains the hospital's id, name and address
     hospitals: [
         {
             'hospital_id': 1,
@@ -78,6 +80,8 @@ module.exports = {
             'address': 'Farrer Park Station Rd, Connexion, 217562'
         },
     ],
+    // Default database for hospital's wards
+    // These data contains the ward's id, hospital's id, ward name and number of beds
     wards: [
         {
             'ward_id': 1,
@@ -116,12 +120,15 @@ module.exports = {
             'beds': 1
         },
     ],
+    // Default database for warded patient
+    // These data contains the people's id, ward's id
     warded: [
         {
             'people_id': 1,
             'ward_id': 5
         }
     ],
+    // Centralised function to help faciliated with collecting response from user
     input(question) {
         return new Promise((callback, error) => {
             rl.question(question, (userInput) => {
@@ -131,6 +138,7 @@ module.exports = {
             });
         })
     },
+    // Authenticate the user to allow access to the system
     async authenticate(key) {
         // Hash the given API Key - Using the hashing algorithm sha256
         key = crypto.createHash('sha256').update(key).digest('hex')
@@ -141,29 +149,39 @@ module.exports = {
         } else {
             // Set the authenticated to true to allow other functions to be used
             this.authenticated = true
-            // Display the menu for the supported hospitals
-            console.log('============================================')
-            console.log('Welcome to Hospital Management System!')
-            console.log('============================================')
-            console.log('Select a hospital to view wards and patients')
-            this.hospitals.forEach((hospital) => {
-                console.log(`${hospital.hospital_id}. ${hospital.hospital_name}`)
-            });
-            console.log('============================================')
-            let hospitalId = await this.input('Choose a hospital: ')
-            this.hospitalMenu(hospitalId)
+            this.hospitalMenu();
         }
     },
     // This function will verify that all request made are by trusted & authenticated user
     middleware() {
         if (!this.authenticated) {
             console.log('Please authenticated with the valid API key, before accessing the system');
+            rl.close();
             return false;
         } else {
             return true;
         }
     },
-    async hospitalMenu(id) {
+    async hospitalMenu() {
+        // Display the menu for the supported hospitals
+        console.log('============================================')
+        console.log('Welcome to Hospital Management System!')
+        console.log('============================================')
+        console.log('Select a hospital to view wards and patients')
+        this.hospitals.forEach((hospital) => {
+            console.log(`${hospital.hospital_id}. ${hospital.hospital_name}`)
+        });
+        console.log(`${this.hospitals.length + 1}. Exit application`)
+        console.log('============================================')
+        let hospitalId = await this.input('Choose a hospital: ')
+        if (hospitalId >= this.hospitals.length + 1) {
+            rl.close();
+            return;
+        }
+        this.wardMenu(hospitalId)
+    },
+    // Showing the the ward's option for the selected hospital
+    async wardMenu(id) {
         if (!this.middleware()) {
             return;
         }
@@ -172,11 +190,12 @@ module.exports = {
         console.log(`Selected Hospital: ${selectedHospital.hospital_name}`)
         console.log(`Address: ${selectedHospital.address}`)
         console.log('============================================')
-        console.log('Main Menu')
+        console.log('Wards Menu')
         console.log('1. List Wards')
-        console.log('2. Add Wards')
-        console.log('3. Delete Wards')
-        console.log('4. Exit application')
+        console.log('2. Add Ward')
+        console.log('3. Delete Ward')
+        console.log('4. Update Ward')
+        console.log('5. Back to main menu')
         console.log('============================================')
         let option = await this.input('Select your option: ')
         switch (+option) {
@@ -184,7 +203,7 @@ module.exports = {
                 this.listWards(id)
                 break;
             default:
-                rl.close();
+                this.hospitalMenu()
                 return;
         }
     },
@@ -206,13 +225,22 @@ module.exports = {
         //     hospitalWards['occupied'] = occupiedBeds.length
         // })
 
-        // console.log('============================================')
-        // console.log('Current Ward')
-        // console.log('============================================')
-        // console.log('Select a hospital to view wards and patients')
-        // this.hospitalWards.forEach((ward) => {
-        //     console.log(`${ward}`)
-        // });
-        // console.log('============================================')
+        console.log('============================================')
+        console.log(`Hospital's Wards - ${selectedHospital.hospital_name}`)
+        console.log('============================================')
+        console.log('List Wards Menu')
+        hospitalWards.forEach((ward, index) => {
+            console.log(`${index + 1}. ${ward.ward_name}`)
+        });
+        console.log(`${hospitalWards.length + 1}. Back to wards menu`)
+        console.log('============================================')
+        let option = await this.input('Select your option: ')
+        switch (+option) {
+            case 1:
+                break;
+            default:
+                this.wardMenu(selectedHospital.hospital_id)
+                return;
+        }
     }
 }
