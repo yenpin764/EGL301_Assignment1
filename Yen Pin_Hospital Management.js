@@ -12,6 +12,7 @@ const rl = readline.createInterface({
 });
 
 module.exports = {
+    // As hospital's systems are generally deemed as mission critial, to enhance security an API key is required
     // API key to verify against
     // This API key is hashed with SHA256
     api_key: '4cb1add534211a4b76eae6f29164444a93a1a33ec6505f5ec53e0d0bee13b84a',
@@ -170,7 +171,7 @@ module.exports = {
     },
     async hospitalsMenu() {
         // Display the menu for the supported hospitals
-        console.log('============================================')
+        console.log('\n============================================')
         console.log('Welcome to Hospital Management System!')
         console.log('============================================')
         console.log('Select a hospital to view wards and patients')
@@ -197,7 +198,7 @@ module.exports = {
             return;
         }
         let selectedHospital = this.hospitals.find((hospital) => hospital.hospital_id == hospitalId)
-        console.log('============================================')
+        console.log('\n============================================')
         console.log(`Selected Hospital: ${selectedHospital.hospital_name}`)
         console.log(`Address: ${selectedHospital.address}`)
         console.log('============================================')
@@ -218,6 +219,9 @@ module.exports = {
                 break;
             case 3:
                 this.deleteWard(hospitalId)
+                break;
+            case 4:
+                this.updateWard(hospitalId)
                 break;
             default:
                 this.hospitalsMenu()
@@ -241,7 +245,7 @@ module.exports = {
         //     hospitalWards['occupied'] = occupiedBeds.length
         // })
 
-        console.log('============================================')
+        console.log('\n============================================')
         console.log(`Hospital's Wards - ${selectedHospital.hospital_name}`)
         console.log('============================================')
         console.log('List Wards Menu')
@@ -270,7 +274,7 @@ module.exports = {
         // Get the selected hospital
         let selectedHospital = this.hospitals.find((hospital) => hospital.hospital_id == hospitalId)
 
-        console.log('============================================')
+        console.log('\n============================================')
         console.log(`Add Ward - ${selectedHospital.hospital_name}`)
         console.log('============================================')
         console.log('Enter \'cancel\' to exit')
@@ -305,7 +309,7 @@ module.exports = {
             'beds': numberOfBeds
         },)
 
-        console.log('============================================')
+        console.log('\n============================================')
         console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
         console.log(`Ward Added - ${wardName}`)
         console.log('============================================')
@@ -325,7 +329,7 @@ module.exports = {
         // Get all selected hospital's wards
         let hospitalWards = this.wards.filter((wards) => wards.hospital_id == hospitalId)
 
-        console.log('============================================')
+        console.log('\n============================================')
         console.log(`Hospital's Wards - ${selectedHospital.hospital_name}`)
         console.log('============================================')
         console.log('Delete Ward Menu')
@@ -344,9 +348,80 @@ module.exports = {
             let deleteWard = hospitalWards[option - 1];
             this.wards = this.wards.filter((wards) => wards.ward_id != deleteWard.ward_id);
 
-            console.log('============================================')
+            console.log('\n============================================')
             console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
             console.log(`Ward Deleted - ${deleteWard.ward_name}`)
+            console.log('============================================')
+
+            setTimeout(() => {
+                this.wardMenus(selectedHospital.hospital_id)
+            }, 3000);
+        }
+    },
+    async updateWard(hospitalId) {
+        if (!this.middleware()) {
+            return;
+        }
+
+        // Get the selected hospital
+        let selectedHospital = this.hospitals.find((hospital) => hospital.hospital_id == hospitalId)
+
+        // Get all selected hospital's wards
+        let hospitalWards = this.wards.filter((wards) => wards.hospital_id == hospitalId)
+
+        console.log('\n============================================')
+        console.log(`Hospital's Wards - ${selectedHospital.hospital_name}`)
+        console.log('============================================')
+        console.log('Update Ward Menu')
+        // List all wards of the selected hospital
+        hospitalWards.length != 0 ?
+            hospitalWards.forEach((ward, index) => {
+                console.log(`${index + 1}. ${ward.ward_name} - ${ward.beds} Bed${ward.beds != 1 ? 's' : ''}`)
+            }) : console.log('- There are no ward added');
+        console.log(`${hospitalWards.length + 1}. Back to wards menu`)
+        console.log('============================================')
+        let option = await this.input('Select your option: ')
+
+        if (option >= hospitalWards.length + 1) {
+            this.wardMenus(selectedHospital.hospital_id)
+        } else {
+            let selectedWard = this.wards[option - 1];
+            console.log('\n============================================')
+            console.log(`${selectedWard.ward_name}`)
+            console.log('============================================')
+            console.log('Leave the fill blank if no update on the field is intended')
+            console.log('Enter \'cancel\' to exit')
+
+
+            let wardName = await this.input('Enter the new ward\'s name: ')
+            if (wardName == 'cancel') {
+                this.wardMenus(selectedHospital.hospital_id)
+            }
+
+            let checkNumberOfBedsIsANumber = false
+            let numberOfBeds = 0;
+            while (!checkNumberOfBedsIsANumber) {
+                numberOfBeds = await this.input('Enter no. of beds in the ward: ')
+                if (numberOfBeds == 'cancel') {
+                    this.wardMenus(selectedHospital.hospital_id)
+                } else {
+                    if (new RegExp('^[0-9]+$').test(+numberOfBeds)) {
+                        checkNumberOfBedsIsANumber = true;
+                    } else {
+                        console.log('No. of beds need to be a number!')
+                    }
+                }
+            }
+
+            wardName != '' ?
+                this.wards.find((ward) => ward.ward_id = selectedWard.ward_id).ward_name = wardName : ''
+
+            numberOfBeds != 0 ?
+                this.wards.find((ward) => ward.ward_id = selectedWard.ward_id).beds = numberOfBeds : ''
+
+            console.log('============================================')
+            console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
+            console.log(`Ward Update - ${selectedWard.ward_name}`)
             console.log('============================================')
 
             setTimeout(() => {
