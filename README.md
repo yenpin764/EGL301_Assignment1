@@ -117,3 +117,84 @@ Bed 1 - Occupied By Sarah Tan
 ============================================
 ```
 10. After 3 seconds, the list wards menu will be shown again!
+
+### Example 2 - Add Patient
+
+1. Upon running the ```node app.js``` command
+2. The following menu will be shown
+
+```
+============================================
+Welcome to Hospital Management System!
+============================================
+Main Menu
+1. Hospitals
+2. Patients
+3. Exit application
+============================================
+Select your option: 
+```
+
+3. Enter 2 in the console
+4. The patients menu will then be shown
+```
+============================================
+Patients Menu
+============================================
+Patients Menu
+1. List Patients
+2. Add Patient
+3. Delete Patient
+4. Update Patient
+5. Back to main menu
+============================================
+Select your option: 
+```
+5. Select add patient by entering 2
+6. The add patient form will be shown, to abort just enter the keyword **cancel** in any of the fields
+```
+============================================
+Add Patient
+============================================
+Enter 'cancel' to exit
+Enter the patient's name: 
+```
+7. The NRIC field require the format to be in T1234567P / S1234567D, following the actual format
+8. When the form is completed, a success dialog will be shown as follows
+```
+============================================
+Patient Name - Yen Pin
+Patient Nric - T1234567P
+Patient Address - 567 Woodlands Drive, #05-678, Singapore 567840
+============================================
+```
+9. After 3 seconds, the patients menu will be shown again!
+
+## 4. Possible Error Messages
+
+1. When keying an invalid option in the field, the following error will be shown. Simply enter a valid option again in the prompt!
+```
+Select your option: asdf
+asdf
+Select a valid option
+Select your option: 
+```
+
+2. When warding a patient to a full ward, simply re-select another ward that is empty
+```
+============================================
+Adrian Lim (Not warded)
+============================================
+1. Child's Ward (Khoo Teck Puat Hospital) 
+2. Adult's Ward (Khoo Teck Puat Hospital) - Ward Full
+3. Senior's Ward (Khoo Teck Puat Hospital) 
+4. A1 Ward (Mount Alvernia Hospital) 
+5. B2 Ward (Mount Alvernia Hospital) 
+6. C3 Ward (Mount Alvernia Hospital) 
+7. Back to list patients menu
+============================================
+Select your option: 2
+2
+The selected ward is full, please try another ward!
+Select your option: 
+```
