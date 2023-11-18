@@ -11,9 +11,9 @@ This hospital management system is created to help facilitate the patients who a
 
 ## 1. Introduction
 
-It is relevatively easy to use this node module, as it uses a **menu driven approach**.
+It is relatively easy to use this node module, as it uses a **menu-driven approach**.
 
-The following the hierarchy
+The following is the hierarchy
 - Main Menu
     - Hospitals
         - List of Hospitals
@@ -24,7 +24,7 @@ The following the hierarchy
             - Update Ward
     - Patients
         - List Patients
-            - Allow patient to be warded
+            - Allow the patient to be warded
             - Unward patient
         - Add Patient
         - Delete patient
@@ -33,14 +33,14 @@ The following the hierarchy
 
 ## 2. Installation
 
-This system requires an api key to authenticate before using, **any authorized access or direct access to the system's function will be blocked by the middleware.**
+This system requires an API key to authenticate before use, **any authorized access or direct access to the system's function will be blocked by the middleware.**
 
-The api key is ```d94ffc98-31ea-478d-92f4-38bfe4a748ca```, the instructions below will demostrate on how to authenticate using the api key.
+The API key is ```d94ffc98-31ea-478d-92f4-38bfe4a748ca```, the instructions below will demonstrate on how to authenticate using the API key.
 
 ### Instructions
 
 1. Clone the repository
-2. Create a app.js file in the root folder
+2. Create an app.js file in the root folder
 3. Copy & Paste to the app.js file: ``` const hms = require("./Yen Pin_Hospital Management.js"); ```
 4. Copy & Paste to the app.js file: ``` hms.authenticate('d94ffc98-31ea-478d-92f4-38bfe4a748ca'); ```
 5. Run the command ```node app.js``` in the console
@@ -111,7 +111,7 @@ List Wards Menu
 ============================================
 Select your option: 
 ```
-9. By selecting on the ward, the details of the ward will be displayed
+9. By selecting the ward, the details of the ward will be displayed
 ```
 ============================================
 Selected Hospital - Khoo Teck Puat Hospital
@@ -154,7 +154,7 @@ Patients Menu
 Select your option: 
 ```
 5. Select add patient by entering 2
-6. The add patient form will be shown, to abort just enter the keyword **cancel** in any of the fields
+6. The add patient form will be shown, abort just enter the keyword **cancel** in any of the fields
 ```
 ============================================
 Add Patient
@@ -162,7 +162,7 @@ Add Patient
 Enter 'cancel' to exit
 Enter the patient's name: 
 ```
-7. The NRIC field require the format to be in T1234567P / S1234567D, following the actual format
+7. The NRIC field requires the format to be in T1234567P / S1234567D, following the actual format
 8. When the form is completed, a success dialog will be shown as follows
 ```
 ============================================
@@ -207,26 +207,26 @@ Select your option:
 input(question)
 
 ```
-Centralised function to faciliate all questions and answers from other functions by using promise
+Centralised function to facilitate all questions and answers from other functions by using promise
 ```
 
 authenticate(key)
 
 ```
-Main function to check the given api key and validate it with the system's api key.
-As the system's api key is hashed with SHA256 when validating, the user's key also have to be hashed before checking
+The main function is to check the given API key and validate it with the system's API key.
+As the system's API key is hashed with SHA256 when validating, the user's key also has to be hashed before checking
 ```
 
 middleware()
 
 ```
-All functions will first be routed into this middleware function to check if the system have been authenticate, if the system have not be authenticate an error message will be shown. This prevents access to the functions even when the user have not been authenticated
+All functions will first be routed into this middleware function to check if the system has been authenticated, if the system has not been authenticated an error message will be shown. This prevents access to the functions even when the user has not been authenticated
 ```
 
 mainMenu()
 
 ```
-This menu will contains the options to proceed with the hospitals menu or the patient menus
+This menu will contain the options to proceed with the hospitals menu or the patient menus
 ```
 
 hospitalsMenu()
@@ -238,7 +238,7 @@ In this menu, all the hospitals in the database will be shown.
 wardsMenu(hospitalId)
 
 ```
-Upon selecting a hospital, the wards menu will be display. This menu will allow the user to list wards, add ward, delete ward, update ward or return the hospitals menu
+Upon selecting a hospital, the wards menu will be displayed. This menu will allow the user to list wards, add ward, delete ward, update ward or return the hospitals menu
 ```
 
 listWards(hospitalId)
@@ -274,7 +274,7 @@ In this menu, the user can select the menu to list patients, add patient, delete
 listPatients()
 
 ```
-Show all the patients, upon further selection more details about the patient's warded hospital will be shown or allow the user to be warded in the available hospital's ward
+Show all the patients, upon further selection more details about the patient's warded hospital will be shown, or allow the user to be warded in the available hospital's ward
 ```
 
 patient(patientId)
