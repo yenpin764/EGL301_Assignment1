@@ -19,36 +19,36 @@ module.exports = {
     // Upon successful authenticate, the variable will be set to true
     // This variable is crucial as it is used in the middleware
     authenticated: false,
-    // Default database for peoples - They can be warded or healthy (Not Warded)
-    // These data contains the person's id, name, NRIC, and address
-    peoples: [
+    // Default database for patients - They can be warded or healthy (Not Warded)
+    // These data contains the patient's id, name, NRIC, and address
+    patients: [
         {
-            'people_id': '1ce38d77-c08f-4181-b9af-4798d9f423d6',
-            'people_name': 'Sarah Tan',
+            'patient_id': '1ce38d77-c08f-4181-b9af-4798d9f423d6',
+            'patient_name': 'Sarah Tan',
             'nric': 'S1234567H',
             'address': '123 Orchard Road, #05-678, Singapore 123456'
         },
         {
-            'people_id': '7c7f9f31-5901-4a6c-9f0b-8c66baac11af',
-            'people_name': 'Adrian Lim',
+            'patient_id': '7c7f9f31-5901-4a6c-9f0b-8c66baac11af',
+            'patient_name': 'Adrian Lim',
             'nric': 'T7654321H',
             'address': '456 Bukit Timah Street, #02-345, Singapore 789012'
         },
         {
-            'people_id': 'e2e8d577-43ec-4031-8d93-4669ee8ee20b',
-            'people_name': 'Michelle Lee',
+            'patient_id': 'e2e8d577-43ec-4031-8d93-4669ee8ee20b',
+            'patient_name': 'Michelle Lee',
             'nric': 'S9876543H',
             'address': '789 Serangoon Avenue, #23-123, Singapore 234567'
         },
         {
-            'people_id': 'e42ed334-effe-41f6-a4d2-803516607e51',
-            'people_name': 'Brian Ng',
+            'patient_id': 'e42ed334-effe-41f6-a4d2-803516607e51',
+            'patient_name': 'Brian Ng',
             'nric': 'T3456789H',
             'address': '321 Jurong West Street, #10-567, Singapore 456789'
         },
         {
-            'people_id': 'b10635aa-be2f-41b7-9fbe-64d5294f38d8',
-            'people_name': 'Vanessa Goh',
+            'patient_id': 'b10635aa-be2f-41b7-9fbe-64d5294f38d8',
+            'patient_name': 'Vanessa Goh',
             'nric': 'S2345678H',
             'address': '567 Woodlands Drive, #05-678, Singapore 567840'
         }
@@ -128,10 +128,10 @@ module.exports = {
         },
     ],
     // Default database for warded patient
-    // These data contains the people's id, ward's id
+    // These data contains the patient's id, ward's id
     warded: [
         {
-            'people_id': '1ce38d77-c08f-4181-b9af-4798d9f423d6',
+            'patient_id': '1ce38d77-c08f-4181-b9af-4798d9f423d6',
             'ward_id': '6e571ff8-873c-404e-9672-2ba3efb45b3d'
         }
     ],
@@ -156,7 +156,7 @@ module.exports = {
         } else {
             // Set the authenticated to true to allow other functions to be used
             this.authenticated = true
-            this.hospitalsMenu();
+            this.mainMenu();
         }
     },
     // This function will verify that all request made are by trusted & authenticated user
@@ -169,11 +169,58 @@ module.exports = {
             return true;
         }
     },
+    async mainMenu() {
+        if (!this.middleware()) {
+            return;
+        }
+
+        console.log('\n============================================')
+        console.log('Welcome to Hospital Management System!')
+        console.log('============================================')
+        console.log('Main Menu')
+        console.log('1. Hospitals')
+        console.log('2. Patients')
+        console.log(`3. Exit application`)
+        console.log('============================================')
+
+        let checkIfValidOption = false;
+        let option = 1;
+
+        while (!checkIfValidOption) {
+            option = await this.input('Select your option: ')
+
+            if (new RegExp('^[1-9]+$').test(option)) {
+                // Check if the entered number is equal to the exit application index
+                if (option == 3) {
+                    rl.close();
+                    return;
+                } else if (option > 3) {
+                    console.log('Select a valid option')
+                } else {
+                    checkIfValidOption = true;
+                    switch (+option) {
+                        case 1:
+                            this.hospitalsMenu()
+                            break;
+                        case 2:
+                            this.patientsMenu()
+                            break;
+                    }
+                }
+            } else {
+                console.log('Select a valid option');
+            }
+        }
+
+    },
     async hospitalsMenu() {
+        if (!this.middleware()) {
+            return;
+        }
 
         // Display the menu for the supported hospitals
         console.log('\n============================================')
-        console.log('Welcome to Hospital Management System!')
+        console.log('Hospitals Menu')
         console.log('============================================')
         console.log('Select a hospital to view wards and patients')
         // Looping through the list of hospital
@@ -181,7 +228,7 @@ module.exports = {
         this.hospitals.forEach((hospital, index) => {
             console.log(`${index + 1}. ${hospital.hospital_name}`)
         });
-        console.log(`${this.hospitals.length + 1}. Exit application`)
+        console.log(`${this.hospitals.length + 1}. Back to main menu`)
         console.log('============================================')
 
         let checkIfValidOption = false;
@@ -191,10 +238,9 @@ module.exports = {
             hospitalId = await this.input('Choose a hospital: ')
 
             if (new RegExp('^[1-9]+$').test(hospitalId)) {
-                // Check if the entered number is equal to the exit application index
+                // Check if the entered number is equal to go back to main menu
                 if (hospitalId == this.hospitals.length + 1) {
-                    rl.close();
-                    return;
+                    this.mainMenu();
                 } else if (hospitalId > this.hospitals.length + 1) {
                     console.log('Select a valid option')
                 } else {
@@ -213,6 +259,7 @@ module.exports = {
         if (!this.middleware()) {
             return;
         }
+
         let selectedHospital = this.hospitals.find((hospital) => hospital.hospital_id == hospitalId)
         console.log('\n============================================')
         console.log(`Selected Hospital: ${selectedHospital.hospital_name}`)
@@ -223,7 +270,7 @@ module.exports = {
         console.log('2. Add Ward')
         console.log('3. Delete Ward')
         console.log('4. Update Ward')
-        console.log('5. Back to main menu')
+        console.log('5. Back to hospitals menu')
         console.log('============================================')
 
         let checkIfValidOption = false;
@@ -525,6 +572,98 @@ module.exports = {
             }
 
         }
+    },
+    async patientsMenu() {
+        if (!this.middleware()) {
+            return;
+        }
 
+        console.log('\n============================================')
+        console.log('Patients Menu')
+        console.log('============================================')
+        console.log('Patients Menu')
+        console.log('1. List Patients')
+        console.log('2. Add Patient')
+        console.log('3. Delete Patient')
+        console.log('4. Update Patient')
+        console.log('5. Back to main menu')
+        console.log('============================================')
+
+        let checkIfValidOption = false;
+        let option = 1;
+
+        while (!checkIfValidOption) {
+            option = await this.input('Select your option: ')
+
+            if (new RegExp('^[1-9]+$').test(option)) {
+                // Check if the entered number is equal to the exit application index
+                if (option == 5) {
+                    this.mainMenu()
+                } else if (option > 5) {
+                    console.log('Select a valid option')
+                } else {
+                    checkIfValidOption = true;
+                    switch (+option) {
+                        case 1:
+                            this.listPatients()
+                            break;
+                        case 2:
+                            this.addPatient()
+                            break;
+                        case 3:
+                            this.deletePatient()
+                            break;
+                        case 4:
+                            this.updatePatient()
+                            break;
+                    }
+                }
+            } else {
+                console.log('Select a valid option');
+            }
+        }
+    },
+    async listPatients() {
+        if (!this.middleware()) {
+            return;
+        }
+
+        console.log('\n============================================')
+        console.log('List Patients Menu')
+        console.log('============================================')
+        console.log('List Patients Menu')
+        // List all patients of the selected hospital
+        this.patients.length != 0 ?
+            this.patients.forEach((patient, index) => {
+                console.log(`${index + 1}. ${patient.patient_name}`)
+            }) : console.log('- There are no patient added');
+        console.log(`${this.patients.length + 1}. Back to patients menu`)
+        console.log('============================================')
+
+        let checkIfValidOption = false;
+        let option = 1;
+
+        while (!checkIfValidOption) {
+            option = await this.input('Select your option: ')
+
+            if (new RegExp('^[1-9]+$').test(option)) {
+                // Check if the entered number is equal to the patients menu
+                if (option == this.patients.length + 1) {
+                    this.patientsMenu();
+                } else if (option > this.patients.length + 1) {
+                    console.log('Select a valid option')
+                } else {
+                    checkIfValidOption = true;
+                }
+            } else {
+                console.log('Select a valid option');
+            }
+
+        }
+    },
+    async addPatient() {
+        if (!this.middleware()) {
+            return;
+        }
     }
 }
