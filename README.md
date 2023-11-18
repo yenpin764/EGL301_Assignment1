@@ -1,4 +1,4 @@
-# Assignment 1
+# Hospital Management System
 
 You will only need one file, ie, your node module, for this assignment.
 
