@@ -165,6 +165,7 @@ module.exports = {
     },
     // This function will verify that all request made are by trusted & authenticated user
     middleware() {
+        // if the api key is not validated, force the application to close
         if (!authenticated) {
             console.log('Please authenticated with the valid API key, before accessing the system');
             rl.close();
@@ -173,7 +174,10 @@ module.exports = {
             return true;
         }
     },
+    // Display the main menu allowing user to select the hospitals or patients menu
+    // Alternatively, the user can also exit the application
     async mainMenu() {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -190,17 +194,20 @@ module.exports = {
         let checkIfValidOption = false;
         let option = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             option = await this.input('Select your option: ')
 
+            // This uses the regular expression to check if the entered values is a number
             if (new RegExp('^[1-9]+$').test(option)) {
-                // Check if the entered number is equal to the exit application index
+                // Check to see if the entered number is equal to the exit application index
                 if (option == 3) {
                     rl.close();
                     return;
                 } else if (option > 3) {
                     console.log('Select a valid option')
                 } else {
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
                     switch (+option) {
                         case 1:
@@ -218,6 +225,7 @@ module.exports = {
 
     },
     async hospitalsMenu() {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -238,11 +246,12 @@ module.exports = {
         let checkIfValidOption = false;
         let hospitalId = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             hospitalId = await this.input('Choose a hospital: ')
 
             if (new RegExp('^[1-9]+$').test(hospitalId)) {
-                // Check if the entered number is equal to go back to main menu
+                // Check to see if the entered number is equal to go back to main menu
                 if (hospitalId == this.hospitals.length + 1) {
                     this.mainMenu();
                 } else if (hospitalId > this.hospitals.length + 1) {
@@ -250,6 +259,7 @@ module.exports = {
                 } else {
                     // Using the array index, removing the additional 1 added earlier
                     // Find the uuid and then send it to the ward menu
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
                     this.wardsMenu(this.hospitals[hospitalId - 1].hospital_id)
                 }
@@ -260,10 +270,12 @@ module.exports = {
     },
     // Showing the the ward's option for the selected hospital
     async wardsMenu(hospitalId) {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
 
+        // Get the infomation using the hospital id
         let selectedHospital = this.hospitals.find((hospital) => hospital.hospital_id == hospitalId)
         console.log('\n============================================')
         console.log(`Selected Hospital: ${selectedHospital.hospital_name}`)
@@ -280,18 +292,19 @@ module.exports = {
         let checkIfValidOption = false;
         let option = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             option = await this.input('Select your option: ')
 
+            // This uses the regular expression to check if the entered values is a number
             if (new RegExp('^[1-9]+$').test(option)) {
-                // Check if the entered number is equal to the exit application index
+                // Check to see if the entered number is equal to the option to return to the last menu
                 if (option == 5) {
                     this.hospitalsMenu()
                 } else if (option > 5) {
                     console.log('Select a valid option')
                 } else {
-                    // Using the array index, removing the additional 1 added earlier
-                    // Find the uuid and then send it to the ward menu
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
                     switch (+option) {
                         case 1:
@@ -316,6 +329,7 @@ module.exports = {
 
     },
     async listWards(hospitalId) {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -341,16 +355,19 @@ module.exports = {
         let checkIfValidOption = false;
         let option = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             option = await this.input('Select your option: ')
 
+            // This uses the regular expression to check if the entered values is a number
             if (new RegExp('^[1-9]+$').test(option)) {
-                // Check if the entered number is equal to the exit application index
+                // Check to see if the entered number is equal to the exit application index
                 if (option == hospitalWards.length + 1) {
                     this.wardsMenu(selectedHospital.hospital_id)
                 } else if (option > hospitalWards.length + 1) {
                     console.log('Select a valid option')
                 } else {
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
 
                     let bedsCount = this.wards[option - 1].beds;
@@ -359,6 +376,8 @@ module.exports = {
                     console.log('\n============================================')
                     console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
                     console.log(`Ward Name - ${this.wards[option - 1].ward_name}`)
+                    // Check to see if there are any available beds in the ward
+                    // If there is, how many
                     for (let index = 0; index < bedsCount; index++) {
                         if (wardedBeds.length > index) {
                             let patientName = this.patients.find((patient) => patient.patient_id == wardedBeds[index].patient_id).patient_name;
@@ -380,6 +399,7 @@ module.exports = {
         }
     },
     async addWard(hospitalId) {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -395,6 +415,7 @@ module.exports = {
         let checkIfWardNameIsNotEmpty = false;
         let wardName = '';
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfWardNameIsNotEmpty) {
             wardName = await this.input('Enter the ward\'s name: ')
             if (wardName == 'cancel') {
@@ -410,6 +431,7 @@ module.exports = {
         let checkNumberOfBedsIsANumber = false
         let numberOfBeds = 0;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkNumberOfBedsIsANumber) {
             numberOfBeds = await this.input('Enter no. of beds in the ward: ')
             if (numberOfBeds == 'cancel') {
@@ -425,6 +447,8 @@ module.exports = {
             }
         }
 
+        // This array function added the data in to the wards array
+        // cryto.randomUUID() will generate a UUID
         this.wards.push({
             'ward_id': crypto.randomUUID(),
             'hospital_id': selectedHospital.hospital_id,
@@ -443,6 +467,7 @@ module.exports = {
         }, 3000);
     },
     async deleteWard(hospitalId) {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -468,16 +493,19 @@ module.exports = {
         let checkIfValidOption = false;
         let option = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             option = await this.input('Select your option: ')
 
+            // This uses the regular expression to check if the entered values is a number
             if (new RegExp('^[1-9]+$').test(option)) {
-                // Check if the entered number is equal to the exit application index
+                // Check to see if the entered number is equal to the option to return to the last menu
                 if (option == hospitalWards.length + 1) {
                     this.wardsMenu(selectedHospital.hospital_id)
                 } else if (option > hospitalWards.length + 1) {
                     console.log('Select a valid option')
                 } else {
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
 
                     let deleteWard = hospitalWards[option - 1];
@@ -500,6 +528,7 @@ module.exports = {
 
     },
     async updateWard(hospitalId) {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -525,11 +554,13 @@ module.exports = {
         let checkIfValidOption = false;
         let option = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             option = await this.input('Select your option: ')
 
+            // This uses the regular expression to check if the entered values is a number
             if (new RegExp('^[1-9]+$').test(option)) {
-                // Check if the entered number is equal to the exit application index
+                // Check to see if the entered number is equal to the exit application index
                 if (option == hospitalWards.length + 1) {
                     this.wardsMenu(selectedHospital.hospital_id)
                 } else if (option > hospitalWards.length + 1) {
@@ -551,6 +582,7 @@ module.exports = {
                     let checkNumberOfBedsIsANumber = false
                     let numberOfBeds = 0;
 
+                    // This loop make sure that a valid response is given by the user
                     while (!checkNumberOfBedsIsANumber) {
                         numberOfBeds = await this.input('Enter no. of beds in the ward: ')
                         if (numberOfBeds == 'cancel') {
@@ -563,8 +595,10 @@ module.exports = {
                             }
                         }
                     }
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
 
+                    // Using the find array function to manipulate and update data
                     wardName != '' ?
                         this.wards.find((ward) => ward.ward_id == selectedWard.ward_id).ward_name = wardName : ''
 
@@ -588,6 +622,7 @@ module.exports = {
         }
     },
     async patientsMenu() {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -606,16 +641,19 @@ module.exports = {
         let checkIfValidOption = false;
         let option = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             option = await this.input('Select your option: ')
 
+            // This uses the regular expression to check if the entered values is a number
             if (new RegExp('^[1-9]+$').test(option)) {
-                // Check if the entered number is equal to the exit application index
+                // This loop make sure that a valid response is given by the user
                 if (option == 5) {
                     this.mainMenu()
                 } else if (option > 5) {
                     console.log('Select a valid option')
                 } else {
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
                     switch (+option) {
                         case 1:
@@ -638,6 +676,7 @@ module.exports = {
         }
     },
     async listPatients() {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -664,16 +703,19 @@ module.exports = {
         let checkIfValidOption = false;
         let option = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             option = await this.input('Choose a patient: ')
 
+            // This uses the regular expression to check if the entered values is a number
             if (new RegExp('^[1-9]+$').test(option)) {
-                // Check if the entered number is equal to the patients menu
+                // Check to see if the entered number is equal to the patients menu
                 if (option == this.patients.length + 1) {
                     this.patientsMenu();
                 } else if (option > this.patients.length + 1) {
                     console.log('Select a valid option')
                 } else {
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
                     this.patient(this.patients[option - 1].patient_id)
                 }
@@ -683,6 +725,7 @@ module.exports = {
         }
     },
     async patient(patientId) {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -690,7 +733,10 @@ module.exports = {
         let selectedPatient = this.patients.find((patient) => patient.patient_id == patientId)
         let checkWarded = this.warded.find((ward) => ward.patient_id == selectedPatient.patient_id)
 
+        // The checkWarded variable check if the patient is warded
+        // Then, display the relevant menu
         if (checkWarded) {
+            // If the patient is warded then, fetch the ward and hospital details
             let wardedWard = this.wards.find((ward) => ward.ward_id == checkWarded.ward_id);
             let wardedHospital = this.hospitals.find((hospital) => hospital.hospital_id == wardedWard.hospital_id)
             console.log('\n============================================')
@@ -702,16 +748,19 @@ module.exports = {
             let checkIfValidOption = false;
             let option = 1;
 
+            // This loop make sure that a valid response is given by the user
             while (!checkIfValidOption) {
                 option = await this.input('Select your option: ')
 
+                // This uses the regular expression to check if the entered values is a number
                 if (new RegExp('^[1-9]+$').test(option)) {
-                    // Check if the entered number is equal to the patients menu
+                    // Check to see if the entered number is equal to the patients menu
                     if (option == 2) {
                         this.listPatients();
                     } else if (option > 2) {
                         console.log('Select a valid option')
                     } else {
+                        // If the option is valid exit the while loop
                         checkIfValidOption = true;
                         // Removing patient from warded list
                         this.warded = this.warded.filter((ward) => ward.patient_id != selectedPatient.patient_id)
@@ -731,6 +780,7 @@ module.exports = {
                 }
             }
         } else {
+            // If the patient is not warded allow the patient to be warded
             console.log('\n============================================')
             console.log(`${selectedPatient.patient_name} (Not warded)`)
             console.log('============================================')
@@ -745,11 +795,13 @@ module.exports = {
             let checkIfValidOption = false;
             let option = 1;
 
+            // This loop make sure that a valid response is given by the user
             while (!checkIfValidOption) {
                 option = await this.input('Select your option: ')
 
+                // This uses the regular expression to check if the entered values is a number
                 if (new RegExp('^[1-9]+$').test(option)) {
-                    // Check if the entered number is equal to the exit application index
+                    // Check to see if the entered number is equal to the exit application index
                     if (option == this.wards.length + 1) {
                         this.listPatients();
                     } else if (option > this.wards.length + 1) {
@@ -757,9 +809,11 @@ module.exports = {
                     } else {
                         let selectedWard = this.wards[option - 1];
                         let checkIfFull = this.warded.filter((w) => w.ward_id == selectedWard.ward_id).length;
+                        // If the ward selected is full, allow the user to select another ward
                         if (selectedWard.beds == checkIfFull) {
                             console.log('The selected ward is full, please try another ward!')
                         } else {
+                            // If the option is valid exit the while loop
                             checkIfValidOption = true;
 
                             let selectedHospital = this.hospitals.find((hospital) => hospital.hospital_id == selectedWard.hospital_id);
@@ -771,6 +825,7 @@ module.exports = {
                             console.log(`Ward Name - ${selectedWard.ward_name}`)
                             console.log('============================================')
 
+                            // When the warded is available, push the data in the warded array
                             this.warded.push({
                                 'patient_id': selectedPatient.patient_id,
                                 'ward_id': selectedWard.ward_id
@@ -789,6 +844,7 @@ module.exports = {
         }
     },
     async addPatient() {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -801,6 +857,7 @@ module.exports = {
         let checkIfPatientNameIsNotEmpty = false;
         let patientName = '';
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfPatientNameIsNotEmpty) {
             patientName = await this.input('Enter the patient\'s name: ')
             if (patientName == 'cancel') {
@@ -815,6 +872,7 @@ module.exports = {
         let checkIfNricIsNotEmpty = false;
         let patientNric = '';
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfNricIsNotEmpty) {
             patientNric = await this.input('Enter the patient\'s NRIC: ')
             if (patientNric == 'cancel') {
@@ -834,6 +892,7 @@ module.exports = {
         let checkIfPatientAddressIsNotEmpty = false;
         let patientAddress = '';
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfPatientAddressIsNotEmpty) {
             patientAddress = await this.input('Enter the patient\'s address: ')
             if (patientAddress == 'cancel') {
@@ -845,6 +904,8 @@ module.exports = {
             }
         }
 
+        // When all the needed data is provided, push the data in to the patients array
+        // cryto.randomUUID() will generate a UUID
         this.patients.push({
             'patient_id': crypto.randomUUID(),
             'patient_name': patientName,
@@ -863,6 +924,7 @@ module.exports = {
         }, 3000);
     },
     async deletePatient() {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -882,16 +944,19 @@ module.exports = {
         let checkIfValidOption = false;
         let option = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             option = await this.input('Select your option: ')
 
+            // This uses the regular expression to check if the entered values is a number
             if (new RegExp('^[1-9]+$').test(option)) {
-                // Check if the entered number is equal to the patients menu
+                // Check to see if the entered number is equal to the patients menu
                 if (option == this.patients.length + 1) {
                     this.patientsMenu();
                 } else if (option > this.patients.length + 1) {
                     console.log('Select a valid option')
                 } else {
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
 
                     let deletePatient = this.patients[option - 1];
@@ -914,6 +979,7 @@ module.exports = {
         }
     },
     async updatePatient() {
+        // Route all the functions to the middleware to check if the user is authenticated
         if (!this.middleware()) {
             return;
         }
@@ -933,11 +999,13 @@ module.exports = {
         let checkIfValidOption = false;
         let option = 1;
 
+        // This loop make sure that a valid response is given by the user
         while (!checkIfValidOption) {
             option = await this.input('Select your option: ')
 
+            // This uses the regular expression to check if the entered values is a number
             if (new RegExp('^[1-9]+$').test(option)) {
-                // Check if the entered number is equal to the patients menu
+                // Check to see if the entered number is equal to the patients menu
                 if (option == this.patients.length + 1) {
                     this.patientsMenu();
                 } else if (option > this.patients.length + 1) {
@@ -953,6 +1021,7 @@ module.exports = {
                     let checkIfPatientNameIsNotEmpty = false;
                     let patientName = '';
 
+                    // This loop make sure that a valid response is given by the user
                     while (!checkIfPatientNameIsNotEmpty) {
                         patientName = await this.input('Enter the patient\'s new name: ')
                         if (patientName == 'cancel') {
@@ -965,12 +1034,14 @@ module.exports = {
                     let checkIfNricIsNotEmpty = false;
                     let patientNric = '';
 
+                    // This loop make sure that a valid response is given by the user
                     while (!checkIfNricIsNotEmpty) {
                         patientNric = await this.input('Enter the patient\'s new NRIC: ')
                         if (patientNric == 'cancel') {
                             this.patientsMenu();
                         } else {
                             patientNric = patientNric.toUpperCase();
+                            // The regular expression will make sure the NRIC provided is valid
                             if (new RegExp('^[ST]\\d{7}[A-Z]$').test(patientNric)) {
                                 checkIfNricIsNotEmpty = true;
                             } else {
@@ -986,6 +1057,7 @@ module.exports = {
                     let checkIfPatientAddressIsNotEmpty = false;
                     let patientAddress = '';
 
+                    // This loop make sure that a valid response is given by the user
                     while (!checkIfPatientAddressIsNotEmpty) {
                         patientAddress = await this.input('Enter the patient\'s new address: ')
                         if (patientAddress == 'cancel') {
@@ -995,8 +1067,10 @@ module.exports = {
                         }
                     }
 
+                    // If the option is valid exit the while loop
                     checkIfValidOption = true;
 
+                    // If the data provided is not null, then update the field accordingly
                     patientName != '' ?
                         this.patients.find((patient) => patient.patient_id == selectedPatient.patient_id).patient_name = patientName : '';
 
