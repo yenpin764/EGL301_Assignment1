@@ -1,9 +1,15 @@
 # Hospital Management System
 
-You will only need one file, ie, your node module, for this assignment.
+This hospital management system is created to help facilitate the patients who are warded to each hospital
+Created By: Yen Pin (212903G)
 
-In this readme file, describe how to use your node module. It could be similar to **app.js** from Lab2, where you call some functions in your node module and display the output. Describe how to setup your node module, if any. Describe how to call the functions, what parameters required and so on.
+## Installation
 
-You can press **Ctrl+Shift+V** in this file in Visual Studio Code to see a live preview of the readme file.
+It is relevatively easy to use this node module, as it uses a menu driven approach.
 
-For some tips in formatting text in readme file, refer to https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax
+This system requires an api key to authenticate before using, any authorized access or direct access to the system's function will be blocked by the middleware.
+
+1. Clone the repository
+2. Create a app.js file in the root folder
+3. (Copy & Paste to the app.js file) const hms = require("./Yen Pin_Hospital Management.js");
+4. (Copy & Paste to the app.js file) hms.authenticate('d94ffc98-31ea-478d-92f4-38bfe4a748ca');
