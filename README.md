@@ -3,10 +3,10 @@
 This hospital management system is created to help facilitate the patients who are warded to each hospital - Developed By: Yen Pin (212903G)
 
 ## Table of Contents
-- Introduction
-- Installation
-- Examples
-- Possible Error Messages
+- [1. Introduction](#1-introduction)
+- [2. Installation](#2-installation)
+- [3. Examples](#3-examples)
+- [4. Possible Error Messages](#4-possible-error-messages)
 
 ## 1. Introduction
 
