@@ -137,7 +137,7 @@ module.exports = {
         {
             'patient_id': '1ce38d77-c08f-4181-b9af-4798d9f423d6',
             'ward_id': '6e571ff8-873c-404e-9672-2ba3efb45b3d'
-        }
+        },
     ],
     // Centralised function to help faciliated with collecting response from user
     input(question) {
@@ -736,9 +736,56 @@ module.exports = {
             console.log('============================================')
             this.wards.forEach((ward, index) => {
                 let hospital = this.hospitals.find((hospital) => hospital.hospital_id == ward.hospital_id)
-                console.log(`${index + 1}. ${ward.ward_name} (${hospital.hospital_name})`)
+                let checkIfFull = this.warded.filter((w) => w.ward_id == ward.ward_id).length;
+                console.log(`${index + 1}. ${ward.ward_name} (${hospital.hospital_name}) ${checkIfFull == ward.beds ? '- Ward Full' : ''}`)
             })
+            console.log(`${this.wards.length + 1}. Back to list patients menu`)
             console.log('============================================')
+
+            let checkIfValidOption = false;
+            let option = 1;
+
+            while (!checkIfValidOption) {
+                option = await this.input('Select your option: ')
+
+                if (new RegExp('^[1-9]+$').test(option)) {
+                    // Check if the entered number is equal to the exit application index
+                    if (option == this.wards.length + 1) {
+                        this.listPatients();
+                    } else if (option > this.wards.length + 1) {
+                        console.log('Select a valid option')
+                    } else {
+                        let selectedWard = this.wards[option - 1];
+                        let checkIfFull = this.warded.filter((w) => w.ward_id == selectedWard.ward_id).length;
+                        if (selectedWard.beds == checkIfFull) {
+                            console.log('The selected ward is full, please try another ward!')
+                        } else {
+                            checkIfValidOption = true;
+
+                            let selectedHospital = this.hospitals.find((hospital) => hospital.hospital_id == selectedWard.hospital_id);
+
+                            console.log('\n============================================')
+                            console.log('Successfully added to ward')
+                            console.log(`Patient Name - ${selectedPatient.patient_name}`)
+                            console.log(`Hospital Name - ${selectedHospital.hospital_name}`)
+                            console.log(`Ward Name - ${selectedWard.ward_name}`)
+                            console.log('============================================')
+
+                            this.warded.push({
+                                'patient_id': selectedPatient.patient_id,
+                                'ward_id': selectedWard.ward_id
+                            },)
+
+                            setTimeout(() => {
+                                this.listPatients();
+                            }, 3000);
+                        }
+                    }
+                } else {
+                    console.log('Select a valid option');
+                }
+
+            }
         }
     },
     async addPatient() {
