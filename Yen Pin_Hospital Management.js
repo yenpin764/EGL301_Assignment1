@@ -632,7 +632,7 @@ module.exports = {
         console.log('List Patients Menu')
         console.log('============================================')
         console.log('List Patients Menu')
-        // List all patients of the selected hospital
+        // List all patients
         this.patients.length != 0 ?
             this.patients.forEach((patient, index) => {
                 console.log(`${index + 1}. ${patient.patient_name}`)
@@ -658,12 +658,128 @@ module.exports = {
             } else {
                 console.log('Select a valid option');
             }
-
         }
     },
     async addPatient() {
         if (!this.middleware()) {
             return;
+        }
+
+        console.log('\n============================================')
+        console.log(`Add Patient`)
+        console.log('============================================')
+        console.log('Enter \'cancel\' to exit')
+
+        let checkIfPatientNameIsNotEmpty = false;
+        let patientName = '';
+
+        while (!checkIfPatientNameIsNotEmpty) {
+            patientName = await this.input('Enter the patient\'s name: ')
+            if (patientName == 'cancel') {
+                this.patientsMenu();
+            } else if (patientName == '') {
+                console.log('Patient name cannot be empty')
+            } else {
+                checkIfPatientNameIsNotEmpty = true;
+            }
+        }
+
+        let checkIfNricIsNotEmpty = false;
+        let patientNric = '';
+
+        while (!checkIfNricIsNotEmpty) {
+            patientNric = await this.input('Enter the patient\'s NRIC: ')
+            if (patientNric == 'cancel') {
+                this.patientsMenu();
+            } else if (patientNric == '') {
+                console.log('Patient NRIC cannot be empty')
+            } else {
+                patientNric = patientNric.toUpperCase();
+                if (new RegExp('^[ST]\\d{7}[A-Z]$').test(patientNric)) {
+                    checkIfNricIsNotEmpty = true;
+                } else {
+                    console.log('Please enter a valid NRIC - S1234567A / T1234567A')
+                }
+            }
+        }
+
+        let checkIfPatientAddressIsNotEmpty = false;
+        let patientAddress = '';
+
+        while (!checkIfPatientAddressIsNotEmpty) {
+            patientAddress = await this.input('Enter the patient\'s address: ')
+            if (patientAddress == 'cancel') {
+                this.patientsMenu();
+            } else if (patientAddress == '') {
+                console.log('Patient address cannot be empty')
+            } else {
+                checkIfPatientAddressIsNotEmpty = true;
+            }
+        }
+
+        this.patients.push({
+            'patient_id': crypto.randomUUID(),
+            'patient_name': patientName,
+            'nric': patientNric,
+            'address': patientAddress
+        },)
+
+        console.log('\n============================================')
+        console.log(`Patient Name - ${patientName}`)
+        console.log(`Patient Nric - ${patientNric}`)
+        console.log(`Patient Address - ${patientAddress}`)
+        console.log('============================================')
+
+        setTimeout(() => {
+            this.patientsMenu();
+        }, 3000);
+    },
+    async deletePatient() {
+        if (!this.middleware()) {
+            return;
+        }
+
+        console.log('\n============================================')
+        console.log('Delete Patients Menu')
+        console.log('============================================')
+        console.log('Delete Patients Menu')
+        // Delete all patients
+        this.patients.length != 0 ?
+            this.patients.forEach((patient, index) => {
+                console.log(`${index + 1}. ${patient.patient_name}`)
+            }) : console.log('- There are no patient added');
+        console.log(`${this.patients.length + 1}. Back to patients menu`)
+        console.log('============================================')
+
+        let checkIfValidOption = false;
+        let option = 1;
+
+        while (!checkIfValidOption) {
+            option = await this.input('Select your option: ')
+
+            if (new RegExp('^[1-9]+$').test(option)) {
+                // Check if the entered number is equal to the patients menu
+                if (option == this.patients.length + 1) {
+                    this.patientsMenu();
+                } else if (option > this.patients.length + 1) {
+                    console.log('Select a valid option')
+                } else {
+                    checkIfValidOption = true;
+
+                    let deletePatient = this.patients[option - 1];
+                    this.patients = this.patients.filter((patient) => patient.patient_id != deletePatient.patient_id)
+
+                    console.log('\n============================================')
+                    console.log(`Patient Deleted - ${deletePatient.patient_name}`)
+                    console.log('============================================')
+
+                    setTimeout(() => {
+                        this.patientsMenu();
+                    }, 3000);
+                }
+            } else {
+                console.log('Select a valid option');
+            }
         }
     }
 }
