@@ -354,6 +354,26 @@ module.exports = {
                     console.log('Select a valid option')
                 } else {
                     checkIfValidOption = true;
+
+                    let bedsCount = this.wards[option - 1].beds;
+                    let wardedBeds = this.warded.filter((ward) => ward.ward_id == this.wards[option - 1].ward_id);
+
+                    console.log('\n============================================')
+                    console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
+                    console.log(`Ward Name - ${this.wards[option - 1].ward_name}`)
+                    for (let index = 0; index < bedsCount; index++) {
+                        if (wardedBeds.length > index) {
+                            let patientName = this.patients.find((patient) => patient.patient_id == wardedBeds[index].patient_id).patient_name;
+                            console.log(`Bed ${index + 1} - Occupied By ${patientName}`)
+                        } else {
+                            console.log(`Bed ${index + 1} - Available`)
+                        }
+                    }
+                    console.log('============================================')
+
+                    setTimeout(() => {
+                        this.listWards(selectedHospital.hospital_id)
+                    }, 3000);
                 }
             } else {
                 console.log('Select a valid option');
@@ -637,7 +657,14 @@ module.exports = {
         // List all patients
         this.patients.length != 0 ?
             this.patients.forEach((patient, index) => {
-                console.log(`${index + 1}. ${patient.patient_name}`)
+                let checkWarded = this.warded.find((ward) => ward.patient_id == patient.patient_id);
+                if (checkWarded) {
+                    let wardedWard = this.wards.find((ward) => ward.ward_id == checkWarded.ward_id);
+                    let wardedHospital = this.hospitals.find((hospital) => hospital.hospital_id == wardedWard.hospital_id)
+                    console.log(`${index + 1}. ${patient.patient_name} - Warded To ${wardedWard.ward_name} (${wardedHospital.hospital_name})`)
+                } else {
+                    console.log(`${index + 1}. ${patient.patient_name}`)
+                }
             }) : console.log('- There are no patient added');
         console.log(`${this.patients.length + 1}. Back to patients menu`)
         console.log('============================================')
