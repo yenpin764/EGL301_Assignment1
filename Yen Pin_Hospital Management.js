@@ -170,6 +170,7 @@ module.exports = {
         }
     },
     async hospitalsMenu() {
+
         // Display the menu for the supported hospitals
         console.log('\n============================================')
         console.log('Welcome to Hospital Management System!')
@@ -182,15 +183,30 @@ module.exports = {
         });
         console.log(`${this.hospitals.length + 1}. Exit application`)
         console.log('============================================')
-        let hospitalId = await this.input('Choose a hospital: ')
-        // Check if the entered number is more or equal to the exit application index
-        if (hospitalId >= this.hospitals.length + 1) {
-            rl.close();
-            return;
+
+        let checkIfValidOption = false;
+        let hospitalId = 1;
+
+        while (!checkIfValidOption) {
+            hospitalId = await this.input('Choose a hospital: ')
+
+            if (new RegExp('^[1-9]+$').test(hospitalId)) {
+                // Check if the entered number is equal to the exit application index
+                if (hospitalId == this.hospitals.length + 1) {
+                    rl.close();
+                    return;
+                } else if (hospitalId > this.hospitals.length + 1) {
+                    console.log('Select a valid option')
+                } else {
+                    // Using the array index, removing the additional 1 added earlier
+                    // Find the uuid and then send it to the ward menu
+                    checkIfValidOption = true;
+                    this.wardMenus(this.hospitals[hospitalId - 1].hospital_id)
+                }
+            } else {
+                console.log('Select a valid option');
+            }
         }
-        // Using the array index, removing the additional 1 added earlier
-        // Find the uuid and then send it to the ward menu
-        this.wardMenus(this.hospitals[hospitalId - 1].hospital_id)
     },
     // Showing the the ward's option for the selected hospital
     async wardMenus(hospitalId) {
@@ -209,24 +225,44 @@ module.exports = {
         console.log('4. Update Ward')
         console.log('5. Back to main menu')
         console.log('============================================')
-        let option = await this.input('Select your option: ')
-        switch (+option) {
-            case 1:
-                this.listWards(hospitalId)
-                break;
-            case 2:
-                this.addWard(hospitalId)
-                break;
-            case 3:
-                this.deleteWard(hospitalId)
-                break;
-            case 4:
-                this.updateWard(hospitalId)
-                break;
-            default:
-                this.hospitalsMenu()
-                return;
+
+        let checkIfValidOption = false;
+        let option = 1;
+
+        while (!checkIfValidOption) {
+            option = await this.input('Select your option: ')
+
+            if (new RegExp('^[1-9]+$').test(option)) {
+                // Check if the entered number is equal to the exit application index
+                if (option == 5) {
+                    this.hospitalsMenu()
+                } else if (option > 5) {
+                    console.log('Select a valid option')
+                } else {
+                    // Using the array index, removing the additional 1 added earlier
+                    // Find the uuid and then send it to the ward menu
+                    checkIfValidOption = true;
+                    switch (+option) {
+                        case 1:
+                            this.listWards(hospitalId)
+                            break;
+                        case 2:
+                            this.addWard(hospitalId)
+                            break;
+                        case 3:
+                            this.deleteWard(hospitalId)
+                            break;
+                        case 4:
+                            this.updateWard(hospitalId)
+                            break;
+                    }
+                }
+            } else {
+                console.log('Select a valid option');
+            }
         }
+
+
     },
     async listWards(hospitalId) {
         if (!this.middleware()) {
@@ -256,15 +292,33 @@ module.exports = {
             }) : console.log('- There are no ward added');
         console.log(`${hospitalWards.length + 1}. Back to wards menu`)
         console.log('============================================')
-        let option = await this.input('Select your option: ')
 
-        switch (+option) {
-            // case 1:
-            //     break;
-            default:
-                this.wardMenus(selectedHospital.hospital_id)
-                return;
+        let checkIfValidOption = false;
+        let option = 1;
+
+        while (!checkIfValidOption) {
+            option = await this.input('Select your option: ')
+
+            if (new RegExp('^[1-9]+$').test(option)) {
+                // Check if the entered number is equal to the exit application index
+                if (option == hospitalWards.length + 1) {
+                    this.wardMenus(selectedHospital.hospital_id)
+                } else if (option > hospitalWards.length + 1) {
+                    console.log('Select a valid option')
+                } else {
+                    checkIfValidOption = true;
+                }
+            } else {
+                console.log('Select a valid option');
+            }
+
         }
+
+        // switch (+option) {
+        //     default:
+        //         this.wardMenus(selectedHospital.hospital_id)
+        //         return;
+        // }
     },
     async addWard(hospitalId) {
         if (!this.middleware()) {
@@ -279,14 +333,24 @@ module.exports = {
         console.log('============================================')
         console.log('Enter \'cancel\' to exit')
 
+        let checkIfWardNameIsNotEmpty = false;
+        let wardName = '';
 
-        let wardName = await this.input('Enter the ward\'s name: ')
-        if (wardName == 'cancel') {
-            this.wardMenus(selectedHospital.hospital_id)
+        while (!checkIfWardNameIsNotEmpty) {
+            wardName = await this.input('Enter the ward\'s name: ')
+            if (wardName == 'cancel') {
+                this.wardMenus(selectedHospital.hospital_id)
+            } else if (wardName == '') {
+                console.log('Ward name cannot be empty')
+            } else {
+                checkIfWardNameIsNotEmpty = true;
+            }
         }
+
 
         let checkNumberOfBedsIsANumber = false
         let numberOfBeds = 0;
+
         while (!checkNumberOfBedsIsANumber) {
             numberOfBeds = await this.input('Enter no. of beds in the ward: ')
             if (numberOfBeds == 'cancel') {
@@ -312,6 +376,7 @@ module.exports = {
         console.log('\n============================================')
         console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
         console.log(`Ward Added - ${wardName}`)
+        console.log(`No. of Beds - ${numberOfBeds}`)
         console.log('============================================')
 
         setTimeout(() => {
@@ -340,23 +405,40 @@ module.exports = {
             }) : console.log('- There are no ward added');
         console.log(`${hospitalWards.length + 1}. Back to wards menu`)
         console.log('============================================')
-        let option = await this.input('Select your option: ')
 
-        if (option >= hospitalWards.length + 1) {
-            this.wardMenus(selectedHospital.hospital_id)
-        } else {
-            let deleteWard = hospitalWards[option - 1];
-            this.wards = this.wards.filter((wards) => wards.ward_id != deleteWard.ward_id);
+        let checkIfValidOption = false;
+        let option = 1;
 
-            console.log('\n============================================')
-            console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
-            console.log(`Ward Deleted - ${deleteWard.ward_name}`)
-            console.log('============================================')
+        while (!checkIfValidOption) {
+            option = await this.input('Select your option: ')
 
-            setTimeout(() => {
-                this.wardMenus(selectedHospital.hospital_id)
-            }, 3000);
+            if (new RegExp('^[1-9]+$').test(option)) {
+                // Check if the entered number is equal to the exit application index
+                if (option == hospitalWards.length + 1) {
+                    this.wardMenus(selectedHospital.hospital_id)
+                } else if (option > hospitalWards.length + 1) {
+                    console.log('Select a valid option')
+                } else {
+                    checkIfValidOption = true;
+
+                    let deleteWard = hospitalWards[option - 1];
+                    this.wards = this.wards.filter((wards) => wards.ward_id != deleteWard.ward_id);
+
+                    console.log('\n============================================')
+                    console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
+                    console.log(`Ward Deleted - ${deleteWard.ward_name}`)
+                    console.log('============================================')
+
+                    setTimeout(() => {
+                        this.wardMenus(selectedHospital.hospital_id)
+                    }, 3000);
+                }
+            } else {
+                console.log('Select a valid option');
+            }
+
         }
+
     },
     async updateWard(hospitalId) {
         if (!this.middleware()) {
@@ -380,53 +462,69 @@ module.exports = {
             }) : console.log('- There are no ward added');
         console.log(`${hospitalWards.length + 1}. Back to wards menu`)
         console.log('============================================')
-        let option = await this.input('Select your option: ')
 
-        if (option >= hospitalWards.length + 1) {
-            this.wardMenus(selectedHospital.hospital_id)
-        } else {
-            let selectedWard = this.wards[option - 1];
-            console.log('\n============================================')
-            console.log(`${selectedWard.ward_name}`)
-            console.log('============================================')
-            console.log('Leave the fill blank if no update on the field is intended')
-            console.log('Enter \'cancel\' to exit')
+        let checkIfValidOption = false;
+        let option = 1;
 
+        while (!checkIfValidOption) {
+            option = await this.input('Select your option: ')
 
-            let wardName = await this.input('Enter the new ward\'s name: ')
-            if (wardName == 'cancel') {
-                this.wardMenus(selectedHospital.hospital_id)
-            }
-
-            let checkNumberOfBedsIsANumber = false
-            let numberOfBeds = 0;
-            while (!checkNumberOfBedsIsANumber) {
-                numberOfBeds = await this.input('Enter no. of beds in the ward: ')
-                if (numberOfBeds == 'cancel') {
+            if (new RegExp('^[1-9]+$').test(option)) {
+                // Check if the entered number is equal to the exit application index
+                if (option == hospitalWards.length + 1) {
                     this.wardMenus(selectedHospital.hospital_id)
+                } else if (option > hospitalWards.length + 1) {
+                    console.log('Select a valid option')
                 } else {
-                    if (new RegExp('^[0-9]+$').test(+numberOfBeds)) {
-                        checkNumberOfBedsIsANumber = true;
-                    } else {
-                        console.log('No. of beds need to be a number!')
+                    let selectedWard = this.wards[option - 1];
+                    console.log('\n============================================')
+                    console.log(`${selectedWard.ward_name}`)
+                    console.log('============================================')
+                    console.log('Leave the fill blank if no update on the field is intended')
+                    console.log('Enter \'cancel\' to exit')
+
+
+                    let wardName = await this.input('Enter the new ward\'s name: ')
+                    if (wardName == 'cancel') {
+                        this.wardMenus(selectedHospital.hospital_id)
                     }
+
+                    let checkNumberOfBedsIsANumber = false
+                    let numberOfBeds = 0;
+                    while (!checkNumberOfBedsIsANumber) {
+                        numberOfBeds = await this.input('Enter no. of beds in the ward: ')
+                        if (numberOfBeds == 'cancel') {
+                            this.wardMenus(selectedHospital.hospital_id)
+                        } else {
+                            if (new RegExp('^[0-9]+$').test(+numberOfBeds)) {
+                                checkNumberOfBedsIsANumber = true;
+                            } else {
+                                console.log('No. of beds need to be a number!')
+                            }
+                        }
+                    }
+                    checkIfValidOption = true;
+
+                    wardName != '' ?
+                        this.wards.find((ward) => ward.ward_id = selectedWard.ward_id).ward_name = wardName : ''
+
+                    numberOfBeds != 0 ?
+                        this.wards.find((ward) => ward.ward_id = selectedWard.ward_id).beds = numberOfBeds : ''
+
+                    console.log('============================================')
+                    console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
+                    console.log(`New Ward Name - ${this.wards[option - 1].ward_name}`)
+                    console.log(`New No. of Beds - ${this.wards[option - 1].beds}`)
+                    console.log('============================================')
+
+
+                    setTimeout(() => {
+                        this.wardMenus(selectedHospital.hospital_id)
+                    }, 3000);
                 }
             }
 
-            wardName != '' ?
-                this.wards.find((ward) => ward.ward_id = selectedWard.ward_id).ward_name = wardName : ''
-
-            numberOfBeds != 0 ?
-                this.wards.find((ward) => ward.ward_id = selectedWard.ward_id).beds = numberOfBeds : ''
-
-            console.log('============================================')
-            console.log(`Selected Hospital - ${selectedHospital.hospital_name}`)
-            console.log(`Ward Update - ${selectedWard.ward_name}`)
-            console.log('============================================')
-
-            setTimeout(() => {
-                this.wardMenus(selectedHospital.hospital_id)
-            }, 3000);
         }
+
     }
 }
