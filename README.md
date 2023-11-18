@@ -1,16 +1,36 @@
 # Hospital Management System
 
-This hospital management system is created to help facilitate the patients who are warded to each hospital
-Created By: Yen Pin (212903G)
+This hospital management system is created to help facilitate the patients who are warded to each hospital - Developed By: Yen Pin (212903G)
 
 ## Table of Contents
-- 1. Installation
-- 2. Examples
-- 3. Possible Error Messages
+- Introduction
+- Installation
+- Examples
+- Possible Error Messages
 
-## 1. Installation
+## 1. Introduction
 
 It is relevatively easy to use this node module, as it uses a **menu driven approach**.
+
+The following the hierarchy
+- Main Menu
+    - Hospitals
+        - List of Hospitals
+            - List Wards
+                - View if the ward is full/occupied
+            - Add Ward
+            - Delete Ward
+            - Update Ward
+    - Patients
+        - List Patients
+            - Allow patient to be warded
+            - Unward patient
+        - Add Patient
+        - Delete patient
+        - Update Patient
+    - Exit applications
+
+## 2. Installation
 
 This system requires an api key to authenticate before using, **any authorized access or direct access to the system's function will be blocked by the middleware.**
 
@@ -22,12 +42,12 @@ This system requires an api key to authenticate before using, **any authorized a
 4. Copy & Paste to the app.js file: ``` hms.authenticate('d94ffc98-31ea-478d-92f4-38bfe4a748ca'); ```
 5. Run the command ```node app.js``` in the console
 
-## 2. Examples
+## 3. Examples
 
-### Example 1 - List Hospitals
+### Example 1 - List Hospital's Wards
 
 1. Upon running the ```node app.js``` command
-2. The following menu will wil shown
+2. The following menu will be shown
 
 ```
 ============================================
@@ -88,3 +108,12 @@ List Wards Menu
 ============================================
 Select your option: 
 ```
+9. By selecting on the ward, the details of the ward will be displayed
+```
+============================================
+Selected Hospital - Khoo Teck Puat Hospital
+Ward Name - Adult's Ward
+Bed 1 - Occupied By Sarah Tan
+============================================
+```
+10. After 3 seconds, the list wards menu will be shown again!
