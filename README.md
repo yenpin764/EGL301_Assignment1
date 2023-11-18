@@ -7,6 +7,7 @@ This hospital management system is created to help facilitate the patients who a
 - [2. Installation](#2-installation)
 - [3. Examples](#3-examples)
 - [4. Possible Error Messages](#4-possible-error-messages)
+- [5. Functions](#5-functions)
 
 ## 1. Introduction
 
@@ -33,6 +34,8 @@ The following the hierarchy
 ## 2. Installation
 
 This system requires an api key to authenticate before using, **any authorized access or direct access to the system's function will be blocked by the middleware.**
+
+The api key is ```d94ffc98-31ea-478d-92f4-38bfe4a748ca```, the instructions below will demostrate on how to authenticate using the api key.
 
 ### Instructions
 
@@ -197,4 +200,103 @@ Select your option: 2
 2
 The selected ward is full, please try another ward!
 Select your option: 
+```
+
+## 5. Functions
+
+input(question)
+
+```
+Centralised function to faciliate all questions and answers from other functions by using promise
+```
+
+authenticate(key)
+
+```
+Main function to check the given api key and validate it with the system's api key.
+As the system's api key is hashed with SHA256 when validating, the user's key also have to be hashed before checking
+```
+
+middleware()
+
+```
+All functions will first be routed into this middleware function to check if the system have been authenticate, if the system have not be authenticate an error message will be shown. This prevents access to the functions even when the user have not been authenticated
+```
+
+mainMenu()
+
+```
+This menu will contains the options to proceed with the hospitals menu or the patient menus
+```
+
+hospitalsMenu()
+
+```
+In this menu, all the hospitals in the database will be shown.
+```
+
+wardsMenu(hospitalId)
+
+```
+Upon selecting a hospital, the wards menu will be display. This menu will allow the user to list wards, add ward, delete ward, update ward or return the hospitals menu
+```
+
+listWards(hospitalId)
+
+```
+This function will show all the wards related to the selected hospitals. Upon further selection on the ward, the availability and no. of beds in the wards will be shown.
+```
+
+addWard(hospitalId)
+
+```
+Allowing the user to add ward after selecting the hospital in the hospitals menu
+```
+
+deleteWard(hospitalId)
+
+```
+Remove ward from the selected hospital
+```
+
+updateWard(hospitalId)
+
+```
+Update the ward from the selected hospital, including ward name and no. of beds in the ward
+```
+
+patientsMenu()
+
+```
+In this menu, the user can select the menu to list patients, add patient, delete patient and update patient
+```
+
+listPatients()
+
+```
+Show all the patients, upon further selection more details about the patient's warded hospital will be shown or allow the user to be warded in the available hospital's ward
+```
+
+patient(patientId)
+
+```
+Allow the patient to be warded or unward depending on the status
+```
+
+addPatient()
+
+```
+This will display relevant fields need to create a patient
+```
+
+deletePatient()
+
+```
+Delete patient from the record
+```
+
+updatePatient()
+
+```
+Allow the user to update the selected patient
 ```
